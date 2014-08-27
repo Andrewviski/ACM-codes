@@ -8,68 +8,76 @@
 #include <climits>
 #include <utility>
 #include <functional>
-#define INF (1L<<60)
+#include <string.h>
 typedef long long int ll;
-using  namespace std;
-vector< vector < pair < ll,ll > > > graph;
-int n,m,q;
-long long int Dijkstra(ll s,ll t,ll c)
+const ll one = 1;
+const ll INF = one << 30;
+
+using namespace std;
+vector< vector < pair < ll, ll > > > graph;
+int n, m, q;
+long long int Dijkstra(ll s, ll t, ll c)
 {
-    vector<ll> dist(n+5,INF);
-    
-    priority_queue< 
-            pair<ll,pair<ll,pair<ll,ll> > > ,
-            vector< pair<ll,pair<ll,pair<ll,ll> > > > ,
-            greater< pair<ll,pair<ll,pair<ll,ll> > > > > pq;
-    
-    dist[s]=0;
-    pq.push(make_pair(0,make_pair(s,make_pair(c,0))));
-    while(!pq.empty())
+    ll dist[155][3005]={0};
+    ll res = INF;
+    priority_queue<
+            pair<ll, pair<ll, pair<ll, ll> > >,
+            vector< pair<ll, pair<ll, pair<ll, ll> > > >,
+            greater< pair<ll, pair<ll, pair<ll, ll> > > > > pq;
+
+    dist[s][c] = 0;
+    pq.push(make_pair(0, make_pair(s, make_pair(c, 0))));
+    while (!pq.empty())
     {
-        pair<ll, pair< ll , pair<ll,ll> > > p=pq.top();
+        pair<ll, pair< ll, pair<ll, ll> > > p = pq.top();
         pq.pop();
-        ll u=p.second.first;
-        ll d=p.first;
-        ll cc=p.second.second.first;
-        ll prev=p.second.second.second;
-        if(cc>0)
+        ll u = p.second.first;
+        ll d = p.first;
+        ll cc = p.second.second.first;
+        ll prev = p.second.second.second;
+        if (u == t)
+            res = min(res, d);
+        if (cc > 0)
         {
-            for(int i=0;i<graph[u].size();i++)
+            for (int i = 0; i < graph[u].size(); i++)
             {
-                ll v=graph[u][i].second;
-                ll dv=graph[u][i].first;
-                if(dist[v]>=dv+d && dv>prev)
+                ll v = graph[u][i].second;
+                ll dv = graph[u][i].first;
+                if ((dist[v][cc]>d+dv || dist[v][cc]==0)&&dv > prev)
                 {
-                    dist[v]=dv+d;
-                    pq.push(make_pair(dist[v],make_pair(v,make_pair(cc-1,dv))));
-                } 
+                    dist[v][cc]=d+dv;
+                    pq.push(make_pair(dv + d, make_pair(v, make_pair(cc - 1, dv))));
+                }
             }
         }
     }
-    return (dist[t]==INF)?-1:dist[t];
+    return (res == INF) ? -1 : res;
 }
+
 int main()
 {
-    freopen("in.txt","r",stdin);
-    freopen("out.txt","w",stdout);
-    int cases;cin>>cases;
-    while(cases--)
+    freopen("in.txt", "r", stdin);
+    freopen("out.txt", "w", stdout);
+    int cases;
+    cin >> cases;
+    while (cases--)
     {
-        cin>>n>>m>>q;
+        cin >> n >> m >> q;
         graph.clear();
-        graph.assign(n+1,vector< pair<ll,ll> >());
-        for(int i=0;i<m;i++)
+        graph.assign(n + 1, vector< pair<ll, ll> >());
+        for (int i = 0; i < m; i++)
         {
-            ll t1,t2,t3;
-            cin>>t1>>t2>>t3;
-            graph[t1].push_back(make_pair(t3,t2));
+            ll t1, t2, t3;
+            cin >> t1 >> t2 >> t3;
+            graph[t1].push_back(make_pair(t3, t2));
         }
-        for(int i=0;i<q;i++)
+        
+        for (int i = 0; i < q; i++)
         {
-            ll s,t,c;
-            cin>>s>>t>>c;
-            long long int res=Dijkstra(s,t,c);
-            cout<<res<<endl;
+            ll s, t, c;
+            cin >> s >> t >> c;
+            long long int res = Dijkstra(s, t, c);
+            cout << res << endl;
         }
     }
 }
