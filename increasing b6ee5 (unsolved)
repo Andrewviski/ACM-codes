@@ -8,13 +8,14 @@
 #include <climits>
 #include <utility>
 #include <functional>
+#define INF (1L<<60)
 typedef long long int ll;
 using  namespace std;
 vector< vector < pair < ll,ll > > > graph;
 int n,m,q;
 long long int Dijkstra(ll s,ll t,ll c)
 {
-    vector<ll> dist(n+5,10000000);
+    vector<ll> dist(n+5,INF);
     vector<ll> prev(n+5,-1);
     vector<ll> counter(n+5,0);
     
