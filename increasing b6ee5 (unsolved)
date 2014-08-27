@@ -16,40 +16,37 @@ int n,m,q;
 long long int Dijkstra(ll s,ll t,ll c)
 {
     vector<ll> dist(n+5,INF);
-    vector<ll> prev(n+5,-1);
-    vector<ll> counter(n+5,0);
     
-    priority_queue< pair<ll,ll> ,vector< pair<ll,ll> > , greater< pair<ll,ll> > > pq;
+    priority_queue< 
+            pair<ll,pair<ll,pair<ll,ll> > > ,
+            vector< pair<ll,pair<ll,pair<ll,ll> > > > ,
+            greater< pair<ll,pair<ll,pair<ll,ll> > > > > pq;
     
     dist[s]=0;
-    prev[s]=0;
-    counter[s]=c;
-    pq.push(make_pair(0,s));
+    pq.push(make_pair(0,make_pair(s,make_pair(c,0))));
     while(!pq.empty())
     {
-        pair<ll,ll> p=pq.top();
+        pair<ll, pair< ll , pair<ll,ll> > > p=pq.top();
         pq.pop();
-        ll u=p.second;
+        ll u=p.second.first;
         ll d=p.first;
-        if(u==t)
-            return dist[u];
-        if(counter[u]>0)
+        ll cc=p.second.second.first;
+        ll prev=p.second.second.second;
+        if(cc>0)
         {
             for(int i=0;i<graph[u].size();i++)
             {
                 ll v=graph[u][i].second;
                 ll dv=graph[u][i].first;
-                if(dist[v]>dv+d && dv>=prev[u])
+                if(dist[v]>=dv+d && dv>prev)
                 {
                     dist[v]=dv+d;
-                    prev[v]=dv;
-                    counter[v]=counter[u]-1;
-                    pq.push(make_pair(dist[v],v));
+                    pq.push(make_pair(dist[v],make_pair(v,make_pair(cc-1,dv))));
                 } 
             }
         }
     }
-    return -1;
+    return (dist[t]==INF)?-1:dist[t];
 }
 int main()
 {
